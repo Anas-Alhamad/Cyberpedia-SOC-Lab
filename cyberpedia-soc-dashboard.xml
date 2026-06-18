@@ -1,0 +1,53 @@
+<dashboard theme="dark">
+  <label>Cyberpedia SOC - Tactical Threat Hunting Control</label>
+  <description>بنية الكشف التكتيكي للمهندس أنس الحمد - معمل محاكاة الخصوم ورصد السلوكيات الجنائية الغنية بالمعطيات</description>
+  
+  <row>
+    <panel>
+      <single>
+        <title>📊 إجمالي أحداث Sysmon المتدفقة عبر قنوات التوجيه</title>
+        <search>
+          <query>index=wineventlog sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" | stats count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x111c24","0x00bcd4"]</option>
+        <option name="rangeValues"></option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <table>
+        <title>🚨 رصد العمليات المنشأة حديثاً في النواة (Process Creation - Event ID 1)</title>
+        <search>
+          <query>index=wineventlog EventCode=1 | table _time, Computer, User, Image, CommandLine, ParentImage | sort -_time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <table>
+        <title>🔑 اقتناص آليات التثبيت المستمر للأعداء (Registry Persistence - Event ID 13)</title>
+        <search>
+          <query>index=wineventlog EventCode=13 TargetObject="*\\CurrentVersion\\Run*" | table _time, Computer, User, TargetObject, Details | sort -_time</query>
+          <earliest>-7d@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">5</option>
+        <option name="drilldown">none</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>
